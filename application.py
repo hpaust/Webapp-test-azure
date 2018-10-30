@@ -1,9 +1,10 @@
-from flask import Flask
+
+from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 languages = [{'name': 'Javascript'},{'name':'Henrik'},{'name':'Ruby'}]
 
-@app.route('/',methods=['GET'])
+@app.route('/')
 def test():
     return jsonify({'message':'It works'})
 
