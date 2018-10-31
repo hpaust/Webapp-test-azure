@@ -108,7 +108,7 @@ api.add_resource(GetDagensvitsFromExcel,'/vits')
 
 class osenv(Resource):
 	@jwt_required()
-	def lol(self):
+	def get(self):
 		c = os.environ['APPSETTING_TESTER']
 		d = os.environ['APPSETTING_ny_test']
 		return {"environmetnvar":d}
