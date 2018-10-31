@@ -48,6 +48,7 @@ from flask import Flask,jsonify
 from flask_restful import Resource, Api
 from flask_jwt import JWT, jwt_required
 from flask import make_response
+import os
 
 import pandas as pd
 
@@ -103,6 +104,15 @@ class GetDagensvitsFromExcel(Resource):
         return {"dagens":a,"vits":b}
 
 api.add_resource(GetDagensvitsFromExcel,'/vits')
+
+
+class osenv(Resource):
+	@jwt_required()
+	def lol(self):
+		a = os.environ['TESTER']
+		return {"environmetnvar":a}
+
+api.add_resource(osenv,'/os')
         
 
 @app.errorhandler(404)
