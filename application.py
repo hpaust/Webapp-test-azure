@@ -110,7 +110,7 @@ class osenv(Resource):
 	@jwt_required()
 	def lol(self):
 		c = os.environ['APPSETTING_TESTER']
-		d = os.environ['ny_test']
+		d = os.environ['APPSETTING_ny_test']
 		return {"environmetnvar":d}
     
 api.add_resource(osenv,'/oser')
