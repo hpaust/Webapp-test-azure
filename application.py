@@ -50,13 +50,14 @@ from flask_jwt import JWT, jwt_required
 from flask import make_response
 import os
 from passlib.context import CryptContext
-
+import datetime
 import pandas as pd
 
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['APPSETTING_APPSECRET']
+app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(hours=2)
 
 api = Api(app, prefix="/api/v1")
 
@@ -83,7 +84,7 @@ def verify_authentication(username, password):
     crypter2 = CryptContext(schemes=['sha256_crypt'])
     if not (username and password):
         return False
-    if (crypter2.verify(username,os.environ['APPSETTING_USR_HASH'])==True and crypter2.verify(password,os.environ['APPSETTING_PASS_HASH'])==True)
+    if (crypter2.verify(username,os.environ['APPSETTING_USR_HASH'])==True and crypter2.verify(password,os.environ['APPSETTING_PASS_HASH'])==True):
         return User(id=123)
 
 
