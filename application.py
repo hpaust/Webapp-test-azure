@@ -49,13 +49,14 @@ from flask_restful import Resource, Api
 from flask_jwt import JWT, jwt_required
 from flask import make_response
 import os
+from passlib.context import CryptContext
 
 import pandas as pd
 
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'super-secret'
+app.config['SECRET_KEY'] = os.environ['APPSETTING_APPSECRET']
 
 api = Api(app, prefix="/api/v1")
 
@@ -72,11 +73,19 @@ class User(object):
         return "User(id='%s')" % self.id
 
 
-def verify(username, password):
+#def verify(username, password):
+#    if not (username and password):
+#        return False
+#    if USER_DATA.get(username) == password:
+#        return User(id=123)
+
+def verify_authentication(username, password):
+    crypter2 = CryptContext(schemes=['sha256_crypt'])
     if not (username and password):
         return False
-    if USER_DATA.get(username) == password:
+    if (crypter2.verify(username,os.environ['APPSETTING_USR_HASH'])==True and crypter2.verify(password,os.environ['APPSETTING_PASS_HASH'])==True)
         return User(id=123)
+
 
 
 def identity(payload):
@@ -84,7 +93,7 @@ def identity(payload):
     return {"user_id": user_id}
 
 
-jwt = JWT(app, verify, identity)
+jwt = JWT(app, verify_authentication, identity)
 
 
 class PrivateResource(Resource):
@@ -104,16 +113,6 @@ class GetDagensvitsFromExcel(Resource):
         return {"dagens":a,"vits":b}
 
 api.add_resource(GetDagensvitsFromExcel,'/vits')
-
-
-class osenv(Resource):
-	@jwt_required()
-	def get(self):
-		c = os.environ['APPSETTING_TESTER']
-		d = os.environ['APPSETTING_ny_test']
-		return {"environmetnvar":d}
-    
-api.add_resource(osenv,'/oser')
         
 
 @app.errorhandler(404)
