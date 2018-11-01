@@ -44,27 +44,32 @@
 #if __name__ == '__main__':
 #    app.run(debug=True)
 
-from flask import Flask,jsonify
+from flask import Flask,jsonify,request
 from flask_restful import Resource, Api
 from flask_jwt import JWT, jwt_required
 from flask import make_response
-import os
-from passlib.context import CryptContext
 import datetime
+from passlib.context import CryptContext
+import os
 import pandas as pd
 
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['APPSETTING_APPSECRET']
+
+
 app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(hours=2)
 
-api = Api(app, prefix="/api/v1")
+api = Api(app, prefix="/api/direktedyr")
 
-USER_DATA = {
-    "masnun": "abc123"
-}
 
+
+#USER_DATA = {
+#    USR_HASH: PASS_HASH
+#}
+
+USER_DATA = {os.environ['APPSETTING_USR_HASH']:os.environ['APPSETTING_PASSH_HASH']}
 
 class User(object):
     def __init__(self, id):
@@ -73,28 +78,19 @@ class User(object):
     def __str__(self):
         return "User(id='%s')" % self.id
 
-
-#def verify(username, password):
-#    if not (username and password):
-#        return False
-#    if USER_DATA.get(username) == password:
-#        return User(id=123)
-
-def verify_authentication(username, password):
+def verify(username, password):
     crypter2 = CryptContext(schemes=['sha256_crypt'])
     if not (username and password):
         return False
-    if (crypter2.verify(username,os.environ['APPSETTING_USR_HASH'])==True and crypter2.verify(password,os.environ['APPSETTING_PASS_HASH'])==True):
+    if crypter2.verify(password,USER_DATA[list(USER_DATA.keys())[0]]) and crypter2.verify(username,list(USER_DATA.keys())[0]):
         return User(id=123)
-
-
 
 def identity(payload):
     user_id = payload['identity']
     return {"user_id": user_id}
 
 
-jwt = JWT(app, verify_authentication, identity)
+jwt = JWT(app, verify, identity)
 
 
 class PrivateResource(Resource):
@@ -114,11 +110,22 @@ class GetDagensvitsFromExcel(Resource):
         return {"dagens":a,"vits":b}
 
 api.add_resource(GetDagensvitsFromExcel,'/vits')
+
+
+class Post_tester(Resource):
+    @jwt_required()
+    def post(self):
+        json_data = request.get_json(force=True)
+        un = json_data['username']
+        ps = json_data['password']
         
+        return jsonify({'brukernavn':un,'passord':ps})
+
+api.add_resource(Post_tester,'/poster')
 
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
