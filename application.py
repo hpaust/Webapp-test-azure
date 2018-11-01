@@ -44,6 +44,8 @@
 #if __name__ == '__main__':
 #    app.run(debug=True)
 
+
+
 from flask import Flask,jsonify,request
 from flask_restful import Resource, Api
 from flask_jwt import JWT, jwt_required
@@ -69,7 +71,7 @@ api = Api(app, prefix="/api/direktedyr")
 #    USR_HASH: PASS_HASH
 #}
 
-USER_DATA = {os.environ['APPSETTING_USR_HASH']:os.environ['APPSETTING_PASSH_HASH']}
+USER_DATA = {os.environ['APPSETTING_USR_HASH']:os.environ['APPSETTING_PASS_HASH']}
 
 class User(object):
     def __init__(self, id):
@@ -99,7 +101,7 @@ class PrivateResource(Resource):
         return {"meaning_of_life": 42}
 
 
-api.add_resource(PrivateResource, '/private')
+api.add_resource(PrivateResource, '/meaning')
 
 class GetDagensvitsFromExcel(Resource):
     @jwt_required()
@@ -109,7 +111,7 @@ class GetDagensvitsFromExcel(Resource):
         b=df.loc[0,'passord']
         return {"dagens":a,"vits":b}
 
-api.add_resource(GetDagensvitsFromExcel,'/vits')
+api.add_resource(GetDagensvitsFromExcel,'/excel_test')
 
 
 class Post_tester(Resource):
@@ -129,3 +131,4 @@ def not_found(error):
 
 if __name__ == '__main__':
     app.run(debug=False)
+    
