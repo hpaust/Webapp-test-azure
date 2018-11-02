@@ -71,7 +71,7 @@ api = Api(app, prefix="/api/direktedyr")
 #    USR_HASH: PASS_HASH
 #}
 
-USER_DATA = {os.environ['APPSETTING_USR_HASH']:os.environ['APPSETTING_PASS_HASH']}
+USER_DATA = {os.environ['USRHASH']:os.environ['PASSHHASH']}
 
 class User(object):
     def __init__(self, id):
