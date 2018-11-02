@@ -58,7 +58,7 @@ import pandas as pd
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ['APPSETTING_APPSECRET']
+app.config['SECRET_KEY'] = os.environ['APPSECRET']
 
 
 app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(hours=2)
@@ -130,5 +130,6 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-    app.run(debug=False)
+   app.run(debug=False)
+    
     
